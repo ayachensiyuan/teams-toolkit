@@ -57,25 +57,34 @@
             },
         },
         {
+            "label": "Stop dev proxy",
+            "type": "shell",
+            "command": "node stop.js",
+            "options": {
+                "cwd": "${workspaceFolder}/script"
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "Start dev proxy",
             "type": "shell",
-            "command": "npm run proxy:teamsfx",
-            "isBackground": true,
+            "command": "devproxy -c proxy/config.json",
             "options": {
-              "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}"
             },
+            "isBackground": true,
             "problemMatcher": {
-              "pattern": {
-                "regexp": "^.*$",
-                "file": 1,
-                "location": 1,
-                "message": 1
-              },
-              "background": {
-                "activeOnStart": true,
-                "beginsPattern": ".*",
-                "endsPattern": "^.*(recording).*$"
-              }
+                "pattern": {
+                    "regexp": "^.*$",
+                    "file": 1,
+                    "location": 1,
+                    "message": 1
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".*",
+                    "endsPattern": "^.*(recording).*$"
+                }
             }
         },
         {

@@ -1148,8 +1148,10 @@ async function updateAdaptiveCardForCustomApi(
         };
         const cardFilePath = path.join(adaptiveCardsFolderPath, `${name}.json`);
         const jsonDataPath = path.join(adaptiveCardsFolderPath, `${name}.data.json`);
+        const proxyDataPath = path.join(adaptiveCardsFolderPath, `${name}.proxyData.json`);
         await fs.writeFile(cardFilePath, JSON.stringify(card, null, 2));
-        await fs.writeFile(jsonDataPath, JSON.stringify(requestData, null, 2));
+        await fs.writeFile(jsonDataPath, JSON.stringify(jsonData, null, 2));
+        await fs.writeFile(proxyDataPath, JSON.stringify(requestData, null, 2));
 
         generateWarnings.forEach((w) => {
           warnings.push({

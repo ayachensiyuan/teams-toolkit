@@ -1,13 +1,4 @@
 const fs = require("fs");
-// read all files in the folder
-const files = fs.readdirSync(`src/adaptiveCards`);
-console.log(files);
-// filter out *.data.json files
-const dataFiles = files.filter((file) => file.endsWith(".data.json"));
-const data = dataFiles.map((file) => {
-  const content = fs.readFileSync(`src/adaptiveCards/${file}`, "utf8");
-  return JSON.parse(content);
-});
 // // write data to file
 // fs.writeFileSync("src/data.json", JSON.stringify(data, null, 2));
 
@@ -36,12 +27,21 @@ function updateConfigFile() {
 }
 
 function generateMockFile() {
+  // read all files in the folder
+  const files = fs.readdirSync(`src/adaptiveCards`);
+  // filter out *.proxyData.json files
+  const dataFiles = files.filter((file) => file.endsWith(".proxyData.json"));
+  console.log(dataFiles);
+  const data = dataFiles.map((file) => {
+    const content = fs.readFileSync(`src/adaptiveCards/${file}`, "utf8");
+    return JSON.parse(content);
+  });
   // read mock-template.json
   const mockTemplate = fs.readFileSync("script/mock-template.json", "utf8");
   const mockTemplateJson = JSON.parse(mockTemplate);
   mockTemplateJson.mocks = [];
   //loop through data and replace {{data}} with the data
-  const mockData = data.map((item) => {
+  data.map((item) => {
     const uri = item.uri.replace(/\{(.*)\}/g, "*");
     const mock = {
       request: {

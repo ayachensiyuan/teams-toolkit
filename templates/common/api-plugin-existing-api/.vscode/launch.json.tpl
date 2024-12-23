@@ -84,6 +84,7 @@
                 "group": "all",
                 "hidden": true
             },
+            "postDebugTask": "Stop dev proxy",
             "internalConsoleOptions": "neverOpen"
         }
     ],
