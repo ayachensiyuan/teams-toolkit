@@ -1,8 +1,11 @@
 import * as ACData from "adaptivecards-templating";
+import { CardFactory, ConversationReference, TurnContext } from "botbuilder";
 import express from "express";
-import notificationTemplate from "./adaptiveCards/notification-default.json";
-import { notificationApp } from "./internal/initialize";
-import { TeamsBot } from "./teamsBot";
+import notificationCard from "./adaptiveCards/notification-default.json";
+import { adapter } from "./internal/initialize";
+import { ApplicationTurnState } from "./internal/interface";
+import conversationReferenceStore from "./store/storage";
+import { app } from "./teamsBot";
 
 // Create express application.
 const expressApp = express();
@@ -11,6 +14,20 @@ expressApp.use(express.json());
 const server = expressApp.listen(process.env.port || process.env.PORT || 3978, () => {
   console.log(`\nBot Started, ${expressApp.name} listening to`, server.address());
 });
+
+app.conversationUpdate(
+  "membersAdded",
+  async (context: TurnContext, state: ApplicationTurnState) => {
+    if (!state.conversation.greeted) {
+      const reference = TurnContext.getConversationReference(context.activity);
+      await conversationReferenceStore.add(getKey(reference), reference, {
+        overwrite: true,
+      });
+      state.conversation.greeted = true;
+      await context.sendActivity("Hello and welcome to the team!");
+    }
+  }
+);
 
 // Register an API endpoint with `express`.
 //
@@ -29,102 +46,58 @@ expressApp.post("/api/notification", async (req, res) => {
   const pageSize = 100;
   let continuationToken: string | undefined = undefined;
   do {
-    const pagedData = await notificationApp.notification.getPagedInstallations(
-      pageSize,
-      continuationToken
-    );
-    const installations = pagedData.data;
-    continuationToken = pagedData.continuationToken;
+    if (conversationReferenceStore === undefined || adapter === undefined) {
+      throw new Error("NotificationBot has not been initialized.");
+    }
 
-    for (const target of installations) {
-      await target.sendAdaptiveCard(
-        new ACData.Template(notificationTemplate).expand({
-          $root: {
-            title: "New Event Occurred!",
-            appName: "Contoso App Notification",
-            description: `This is a sample http-triggered notification to ${target.type}`,
-            notificationUrl: "https://aka.ms/teamsfx-notification-new",
-          },
-        })
-      );
+    const references = await conversationReferenceStore.list(pageSize, continuationToken);
+
+    const installations = references.data;
+    continuationToken = references.continuationToken;
+
+    for (const reference of installations) {
+      const cardJson = new ACData.Template(notificationCard).expand({
+        $root: {
+          title: "New Event Occurred!",
+          appName: "Contoso App Notification",
+          description: `This is a sample http-triggered notification to ${reference.conversation?.conversationType}`,
+          notificationUrl: "https://aka.ms/teamsfx-notification-new",
+        },
+      });
+      await app.sendProactiveActivity(reference, {
+        attachments: [CardFactory.adaptiveCard(cardJson)],
+      });
 
       // Note - you can filter the installations if you don't want to send the event to every installation.
 
       /** For example, if the current target is a "Group" this means that the notification application is
-         *  installed in a Group Chat.
-        if (target.type === NotificationTargetType.Group) {
-          // You can send the Adaptive Card to the Group Chat
-          await target.sendAdaptiveCard(...);
-  
-          // Or you can list all members in the Group Chat and send the Adaptive Card to each Team member
-          const pageSize = 100;
-          let continuationToken: string | undefined = undefined;
-          do {
-            const pagedData = await target.getPagedMembers(pageSize, continuationToken);
-            const members = pagedData.data;
-            continuationToken = pagedData.continuationToken;
-
-            for (const member of members) {
-              // You can even filter the members and only send the Adaptive Card to members that fit a criteria
-              await member.sendAdaptiveCard(...);
-            }
-          } while (continuationToken);
-        }
-        **/
+       *  installed in a Group Chat.
+      if (reference.conversation?.conversationType === "groupChat") {
+        // You can send the Adaptive Card to the Group Chat
+        await app.sendProactiveActivity(reference, {
+          attachments: [CardFactory.adaptiveCard(cardJson)],
+        });
+      }
+      **/
 
       /** If the current target is "Channel" this means that the notification application is installed
-         *  in a Team.
-        if (target.type === NotificationTargetType.Channel) {
-          // If you send an Adaptive Card to the Team (the target), it sends it to the `General` channel of the Team
-          await target.sendAdaptiveCard(...);
-  
-          // Alternatively, you can list all channels in the Team and send the Adaptive Card to each channel
-          const channels = await target.channels();
-          for (const channel of channels) {
-            await channel.sendAdaptiveCard(...);
-          }
-  
-          // Or, you can list all members in the Team and send the Adaptive Card to each Team member
-          const pageSize = 100;
-          let continuationToken: string | undefined = undefined;
-          do {
-            const pagedData = await target.getPagedMembers(pageSize, continuationToken);
-            const members = pagedData.data;
-            continuationToken = pagedData.continuationToken;
-
-            for (const member of members) {
-              // You can even filter the members and only send the Adaptive Card to members that fit a criteria
-              await member.sendAdaptiveCard(...);
-            }
-          } while (continuationToken);
-        }
-        **/
+       *  in a Team.
+      if (reference.conversation?.conversationType === "channel") {
+        const details = await app.getTeamDetails(reference);
+        const teamMembers = await app.getPagedMembers(reference);
+        console.log(details, teamMembers.members.length);
+      }
+      **/
 
       /** If the current target is "Person" this means that the notification application is installed in a
-         *  personal chat.
-        if (target.type === NotificationTargetType.Person) {
-          // Directly notify the individual person
-          await target.sendAdaptiveCard(...);
-        }
-        **/
+       *  personal chat.
+      if (reference.conversation?.conversationType === "personal") {
+        // Directly notify the individual person
+        await reference.sendAdaptiveCard(...);
+      }
+      **/
     }
   } while (continuationToken);
-
-  /** You can also find someone and notify the individual person
-    const member = await notificationApp.notification.findMember(
-      async (m) => m.account.email === "someone@contoso.com"
-    );
-    await member?.sendAdaptiveCard(...);
-    **/
-
-  /** Or find multiple people and notify them
-    const members = await notificationApp.notification.findAllMembers(
-      async (m) => m.account.email?.startsWith("test")
-    );
-    for (const member of members) {
-      await member.sendAdaptiveCard(...);
-    }
-    **/
 
   res.json({});
 });
@@ -134,10 +107,13 @@ expressApp.post("/api/notification", async (req, res) => {
 //
 // The Teams Toolkit bot registration configures the bot with `/api/messages` as the
 // Bot Framework endpoint. If you customize this route, update the Bot registration
-// in `/templates/provision/bot.bicep`.
-const teamsBot = new TeamsBot();
+// in `infra/botRegistration/azurebot.bicep`.
 expressApp.post("/api/messages", async (req, res) => {
-  await notificationApp.requestHandler(req, res, async (context) => {
-    await teamsBot.run(context);
+  await adapter.process(req, res, async (context) => {
+    await app.run(context);
   });
 });
+
+function getKey(reference: Partial<ConversationReference>): string {
+  return `_${reference.conversation?.tenantId}_${reference.conversation?.id}`;
+}

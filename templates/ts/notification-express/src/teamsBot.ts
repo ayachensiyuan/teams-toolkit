@@ -1,24 +1,14 @@
-import { TeamsActivityHandler } from "botbuilder";
+import { Application } from "@microsoft/teams-ai";
+import { MemoryStorage } from "botbuilder";
+import config from "./internal/config";
+import { adapter } from "./internal/initialize";
+import { ApplicationTurnState } from "./internal/interface";
 
-// Teams activity handler.
-// You can add your customization code here to extend your bot logic if needed.
-export class TeamsBot extends TeamsActivityHandler {
-  constructor() {
-    super();
-
-    // Listen to MembersAdded event, view https://docs.microsoft.com/en-us/microsoftteams/platform/resources/bot-v3/bots-notifications for more events
-    this.onMembersAdded(async (context, next) => {
-      const membersAdded = context.activity.membersAdded;
-      for (let cnt = 0; cnt < membersAdded.length; cnt++) {
-        if (membersAdded[cnt].id) {
-          await context.sendActivity(
-            "Welcome to the Notification Bot! I am designed to send you updates and alerts using Adaptive Cards triggered by HTTP post requests. " +
-              "Please note that I am a notification-only bot and you can't interact with me. Follow the README in the project and stay tuned for notifications!"
-          );
-          break;
-        }
-      }
-      await next();
-    });
-  }
-}
+// Define storage and application
+const storage = new MemoryStorage();
+export const app = new Application<ApplicationTurnState>({
+  // Adapter and botAppId are required for the Application to send proactive messages.
+  adapter: adapter,
+  botAppId: config.MicrosoftAppId,
+  storage: storage,
+});
