@@ -362,7 +362,10 @@ export class AadAppTemplateCodeLensProvider implements vscode.CodeLensProvider {
     document: vscode.TextDocument,
     jsonNode: parser.Node
   ): vscode.CodeLens[] {
-    const preAuthAppArrNode = parser.findNodeAtLocation(jsonNode, ["preAuthorizedApplications"]);
+    const preAuthAppArrNode =
+      parser.findNodeAtLocation(jsonNode, ["api", "preAuthorizedApplications"]) ||
+      parser.findNodeAtLocation(jsonNode, ["preAuthorizedApplications"]);
+
     const map = getAllowedAppMaps();
     const codeLenses: vscode.CodeLens[] = [];
 

@@ -200,6 +200,30 @@ describe("CodeLens Provider", () => {
         res != null && res[0].command!.command === "fx-extension.editAadManifestTemplate"
       );
     });
+
+    it("ComputePreAuthAppCodeLenses for AAD manifest template", async () => {
+      const document = {
+        fileName: "./aad.manifest.json",
+        getText: () => {
+          return `{
+            "api": {
+              "preAuthorizedApplications": [
+                {
+                  "appId": "1fec8e78-bce4-4aaf-ab1b-5451cc387264"
+                }
+              ]
+            }
+          }`;
+        },
+        positionAt: () => {
+          return new vscode.Position(0, 0);
+        },
+      } as any as vscode.TextDocument;
+
+      const aadProvider = new AadAppTemplateCodeLensProvider();
+      const res = await aadProvider.provideCodeLenses(document);
+      chai.assert.isTrue(res != null && res[0].command!.title.includes("resource name"));
+    });
   });
 
   describe("Crypto CodeLensProvider", () => {
