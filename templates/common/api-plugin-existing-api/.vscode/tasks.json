@@ -46,7 +46,7 @@
         {
             "label": "Prepare data and config",
             "type": "shell",
-            "command": "node script/prepare.js",
+            "command": "node scripts/prepare.js",
         },
         {
             "label": "Check dev proxy",
@@ -61,7 +61,7 @@
             "type": "shell",
             "command": "node stop.js",
             "options": {
-                "cwd": "${workspaceFolder}/script"
+                "cwd": "${workspaceFolder}/scripts"
             },
             "problemMatcher": []
         },

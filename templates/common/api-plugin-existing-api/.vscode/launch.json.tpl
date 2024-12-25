@@ -90,7 +90,7 @@
     ],
     "compounds": [
         {
-            "name": "Debug in Teams (Edge)",
+            "name": "Preview in Copilot with Mocked API (Edge)",
             "configurations": [
                 "Preview in Copilot with dev proxy(Edge)"
             ],

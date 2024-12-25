@@ -28,16 +28,16 @@ function updateConfigFile() {
 
 function generateMockFile() {
   // read all files in the folder
-  const files = fs.readdirSync(`src/adaptiveCards`);
+  const files = fs.readdirSync(`apis`);
   // filter out *.proxyData.json files
   const dataFiles = files.filter((file) => file.endsWith(".proxyData.json"));
   console.log(dataFiles);
   const data = dataFiles.map((file) => {
-    const content = fs.readFileSync(`src/adaptiveCards/${file}`, "utf8");
+    const content = fs.readFileSync(`apis/${file}`, "utf8");
     return JSON.parse(content);
   });
   // read mock-template.json
-  const mockTemplate = fs.readFileSync("script/mock-template.json", "utf8");
+  const mockTemplate = fs.readFileSync("scripts/mock-template.json", "utf8");
   const mockTemplateJson = JSON.parse(mockTemplate);
   mockTemplateJson.mocks = [];
   //loop through data and replace {{data}} with the data
