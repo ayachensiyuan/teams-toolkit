@@ -15,11 +15,11 @@ on:
       target-branch:
         description: "The target branch of the PR"
         required: true
-        default: "release/5.12"
+        default: "release/5.13.1"
       source-branch:
         description: "The source branch of the PR"
         required: true
-        default: "release/5.13.1"
+        default: "release/5.12"
 
 
 permissions:
@@ -322,7 +322,7 @@ jobs:
           echo "::set-output name=user_info::$user_info" 
           echo "email " ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
           email=${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
-          
+
           echo "user_name=$(echo $user_info | jq -r '.name')" >> $GITHUB_ENV
           echo "user_email=$(echo $email)" >> $GITHUB_ENV
           git config --global user.email $email
