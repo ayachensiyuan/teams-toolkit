@@ -291,9 +291,5 @@ jobs:
           git fetch origin ${{ github.event.inputs.source-branch }}:${{ github.event.inputs.source-branch }}
           head=$(git merge-base ${{ github.event.inputs.target-branch }} ${{ github.event.inputs.source-branch }})
           tempfile=$(mktemp)
-          echo $(git log --pretty=format:"%s %h" $head...HEAD -- ./packages/cli)
+          history_cli_feat=`(git log --pretty=format:"%s %h" $head...HEAD -- ./packages/cli) | grep "^feat"`
           echo "1"
-          (git log --pretty=format:"%s %h" $head...HEAD -- ./packages/cli) | grep "^feat"
-          echo "2"
-          history_cli_feat=(git log --pretty=format:"%s %h" $head...HEAD -- ./packages/cli) | grep "^feat"
-          echo "3"
