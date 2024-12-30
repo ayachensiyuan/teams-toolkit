@@ -293,7 +293,7 @@ jobs:
           tempfile=$(mktemp)
           history_cli_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/cli)
           echo "1"
-          history_cli_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/cli | grep -E "^feat")
+          history_cli_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/cli | grep -E "^feat" || true)
           echo "2"
           history_toolkit_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/vscode-extension | grep "^feat")
           history_core_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/fx-core | grep "^feat")
