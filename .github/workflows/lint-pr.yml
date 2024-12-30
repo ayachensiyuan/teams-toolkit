@@ -293,3 +293,6 @@ jobs:
           tempfile=$(mktemp)
           echo "1"
           echo $(git log --pretty=format:"%s %h" $head...HEAD -- packages/cli)
+          git log --pretty=format:"%s %h" $head...HEAD -- packages/cli | grep "^feat"
+          history_cli_feat=(git log --pretty=format:"%s %h" $head...HEAD -- packages/cli) | grep "^feat"
+          echo "2"
