@@ -310,6 +310,7 @@ jobs:
       - name: setup user info
         working-directory: ./packages/vscode-extension
         run: |
+          echo ${{ github.actor }}
           user_info=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/users/$GITHUB_ACTOR)
           git config --global user.email $(echo $user_info | jq -r '.name')
           git config --global user.name $(echo $user_info | jq -r '.name')
