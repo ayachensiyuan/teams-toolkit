@@ -318,9 +318,15 @@ jobs:
         working-directory: ./
         run: |
           user_info=$(curl -s -H "Authorization: token ${{ secrets.TEAMSFX_PAT }}" https://api.github.com/users/${{ github.actor }})
-          git config --global user.email $(echo $user_info | jq -r '.name')
-          git config --global user.name $(echo $user_info | jq -r '.name')
-          git remote set-url origin https://x-access-token:${{ secrets.TEAMSFX_PAT }}@github.com/ayachensiyuan/teams-toolkit.git
+          echo "User info: $user_info"
+          echo "::set-output name=user_info::$user_info" 
+          echo "email " ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
+          email=${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
+          
+          echo "user_name=$(echo $user_info | jq -r '.name')" >> $GITHUB_ENV
+          echo "user_email=$(echo $email)" >> $GITHUB_ENV
+          git config --global user.email $email
+          git config --global user.name $user_name
           git add ./packages/vscode-extension/PRERELEASE.md
           git commit -m "dosc: update changelog for release"
           git push -u origin changelog/${{ github.event.inputs.source-branch }}
