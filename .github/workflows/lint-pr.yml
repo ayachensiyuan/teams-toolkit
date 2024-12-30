@@ -323,5 +323,5 @@ jobs:
           git remote set-url origin https://x-access-token:${{ secrets.TEAMSFX_PAT }}@github.com/ayachensiyuan/teams-toolkit.git
           git add ./packages/vscode-extension/PRERELEASE.md
           git commit -m "dosc: update changelog for release"
-          git push origin changelog/${{ github.event.inputs.source-branch }}
+          git push -u origin changelog/${{ github.event.inputs.source-branch }}
       
