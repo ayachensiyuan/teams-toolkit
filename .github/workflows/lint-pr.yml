@@ -285,7 +285,7 @@ jobs:
           ref: ${{ github.event.inputs.target-branch }}
 
       - name: update changelog
-        working-directory: ./packages/vscode-extension/PRERELEASE.md
+        working-directory: ./packages/vscode-extension
         run: |
           HEAD=git merge-base ${{ github.event.inputs.target-branch }} ${{ github.event.inputs.source-branch }}
           tempfile=$(mktemp)
