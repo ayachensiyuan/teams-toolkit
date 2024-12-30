@@ -293,7 +293,7 @@ jobs:
           tempfile=$(mktemp)
           history_cli_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/cli)
           echo "1"
-          history_cli_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/cli | grep -E "^feat" || true)
+          history_cli_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/cli | grep "^feat" || true)
           echo "2"
           echo "$history_cli_feat"
           history_toolkit_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/vscode-extension | grep "^feat" || true)
@@ -316,7 +316,7 @@ jobs:
       - name: setup user info
         working-directory: ./packages/vscode-extension
         run: |
-          user_info=$(curl -s -H  https://api.github.com/users/$GITHUB_ACTOR)
+          user_info=$(curl -s -H  https://api.github.com/users/${{ github.actor }})
           git config --global user.email $(echo $user_info | jq -r '.name')
           git config --global user.name $(echo $user_info | jq -r '.name')
           git add PRERELEASE.md
