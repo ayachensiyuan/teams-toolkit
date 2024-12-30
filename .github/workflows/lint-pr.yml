@@ -284,14 +284,11 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           ref: ${{ github.event.inputs.target-branch }}
 
-      - name: Fetch all branches and tags
-        run: git fetch --all --tags
-
       - name: update changelog
         id: update-changelog
         working-directory: ./
         run: |
-          git fetch origin ${{ github.event.inputs.source-branch }}:${{ github.event.inputs.source-branch }})
+          git fetch origin ${{ github.event.inputs.source-branch }}:${{ github.event.inputs.source-branch }}
           head=$(git merge-base ${{ github.event.inputs.target-branch }} ${{ github.event.inputs.source-branch }})
           tempfile=$(mktemp)
           history_cli_feat=$(git log --pretty=format:"%s %h" head...HEAD -- packages/cli | grep "^feat")
