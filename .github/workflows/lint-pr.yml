@@ -10,6 +10,18 @@ on:
   schedule:
     - cron: "0 8 * * *"
 
+  workflow_dispatch:
+    inputs:
+      target-branch:
+        description: "The target branch of the PR"
+        required: true
+        default: "origin/dev"
+      source-branch:
+        description: "The source branch of the PR"
+        required: true
+        default: "origin/dev"
+
+
 permissions:
   contents: read
   actions: read
@@ -191,9 +203,9 @@ jobs:
         run: |
           # 找出版本号最大的 release 分支，分为两类：
           # 1. release/NUM 或 release/NUM.NUM 格式
-          LATEST_NUM_RELEASE=$(git branch -r | grep -Eo 'release/[0-9]+\.[0-9]+(\.[0-9]+)?' | sort -t/ -k2 -V | tail -n1)
+          LATEST_NUM_RELEASE=$(git branch -r | grep -E '^  origin/release/[0-9]+(\.[0-9]+)?$' | sed 's/origin\///' | sort -t'/' -k2 -V | tail -n1)
           # 2. release/VSNUMPNUM 格式
-          LATEST_VS_RELEASE=$(git branch -r | grep -E '^  origin/release/[Vv][Ss][0-9]+[Pp][0-9]+$' | tr '[:upper:]' '[:lower:]'  | sed 's/origin\///' | sort -t'/' -k2 -V | tail -n1)
+          LATEST_VS_RELEASE=$(git branch -r | grep -E '^  origin/release/VS[0-9]+P[0-9]+$' | sed 's/origin\///' | sort -t'/' -k2 -V | tail -n1)
           echo "latest_vsc_release=$LATEST_NUM_RELEASE" >> $GITHUB_OUTPUT
           echo "latest_vs_release=$LATEST_VS_RELEASE" >> $GITHUB_OUTPUT
 
@@ -261,3 +273,60 @@ jobs:
               core.setFailed(error.message);
             }
 
+  generate-changelog:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.event.inputs.target-branch }}
+
+      - name: update changelog
+        working-directory: ./packages/vscode-extension/PRERELEASE.md
+        run: |
+          HEAD=git merge-base ${{ github.event.inputs.target-branch }} ${{ github.event.inputs.source-branch }}
+          tempfile=$(mktemp)
+          history_cli_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/cli | grep "^feat")
+          history_toolkit_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/vscode-extension | grep "^feat")
+          history_core_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/fx-core | grep "^feat")
+          history_sdk_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/sdk | grep "^feat")
+          history_sdk_react_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/sdk-react | grep "^feat")
+          history_dotnet_sdk_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/dotnet-sdk | grep "^feat")
+          echo -e '\nFx-core feat commits:\n' "$history_core_feat" '\n\nCLI feat commits:\n' "$history_cli_feat" '\n\nExtension-toolkit feat commits:\n' "$history_toolkit_feat" '\n\nSDK feat commits:\n' "$history_sdk_feat" '\n\nSDK React feat commits:\n' "$history_sdk_react_feat" '\n\n.Net SDK feat commits:\n' "$history_dotnet_sdk_feat" '\n'> "$tempfile"
+          history_cli_fix=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/cli | grep "^fix")
+          history_toolkit_fix=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/vscode-extension | grep "^fix")
+          history_core_fix=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/fx-core | grep "^fix")
+          history_sdk_fix=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/sdk | grep "^fix")
+          history_sdk_react_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/sdk-react | grep "^fix")
+          history_dotnet_sdk_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/dotnet-sdk | grep "^fix")
+          echo -e '\nFx-core fix commits:\n' "$history_core_fix" '\n\nCLI fix commits:\n' "$history_cli_fix" '\n\nExtension-toolkit fix commits:\n' "$history_toolkit_fix" '\n\nSDK fix commits:\n' "$history_sdk_fix"  '\n\nSDK React fix commits:\n' "$history_sdk_react_fix" '\n\n.Net SDK fix commits:\n' "$history_dotnet_sdk_fix" '\n'>> "$tempfile"
+          cat PRERELEASE.md >> "$tempfile"
+          mv "$tempfile" PRERELEASE.md
+          git checkout -b changelog/${{ github.event.inputs.source-branch }}
+      
+      - name: setup user info
+        working-directory: ./packages/vscode-extension
+        run: |
+          user_info=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/users/$GITHUB_ACTOR)
+          git config --global user.email $(echo $user_info | jq -r '.name')
+          git config --global user.name $(echo $user_info | jq -r '.name')
+          git add PRERELEASE.md
+          git commit -m "dosc: update changelog for release"
+          git push origin changelog/${{ github.event.inputs.source-branch }}
+        
+      - name: Create Pull Request
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data: pullRequest } = await github.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'docs: changelog for release',
+              head: 'changelog/${{ github.event.inputs.source-branch }}',
+              base: '${{ github.event.inputs.source-branch }}',
+              body: 'Changelog update'
+            })
+            core.setOutput('pull-request-url', pullRequest.html_url)
