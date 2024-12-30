@@ -291,13 +291,17 @@ jobs:
           git fetch origin ${{ github.event.inputs.source-branch }}:${{ github.event.inputs.source-branch }}
           head=$(git merge-base ${{ github.event.inputs.target-branch }} ${{ github.event.inputs.source-branch }})
           tempfile=$(mktemp)
+          echo "1"
           history_cli_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/cli | grep "^feat")
+          echo "2"
           history_toolkit_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/vscode-extension | grep "^feat")
           history_core_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/fx-core | grep "^feat")
           history_sdk_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/sdk | grep "^feat")
           history_sdk_react_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/sdk-react | grep "^feat")
           history_dotnet_sdk_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/dotnet-sdk | grep "^feat")
+          echo "3"
           echo -e '\nFx-core feat commits:\n' "$history_core_feat" '\n\nCLI feat commits:\n' "$history_cli_feat" '\n\nExtension-toolkit feat commits:\n' "$history_toolkit_feat" '\n\nSDK feat commits:\n' "$history_sdk_feat" '\n\nSDK React feat commits:\n' "$history_sdk_react_feat" '\n\n.Net SDK feat commits:\n' "$history_dotnet_sdk_feat" '\n'> "$tempfile"
+          echo "4"
           history_cli_fix=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/cli | grep "^fix")
           history_toolkit_fix=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/vscode-extension | grep "^fix")
           history_core_fix=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/fx-core | grep "^fix")

@@ -1,5 +1,98 @@
 
 Fx-core feat commits:
+ feat: notify if AAD manifest is already in new schema (#12935) ebb823065
+feat: copilot plugin debugger (#12876) 8f0fc4543
+feat: add convert aad manifest to new schema in fx-core (#12928) 7ab47da28
+feat: update fx-core to support new Microsoft Entra schema (#12918) 7c4410297
+feat: support env variables in localization.json (#12889) 82fefd956
+feat: update walkthrough (#12863) d8674396d
+feat: update create new project UI (#12847) 64bb5b1c8
+feat: update teams-js version (#12805) 9551812fd
+feat: remove copilot plugin feature flag and remove standalone api plugin (#12706) e84e1682b
+feat: e2e support for multi-tenant (#12642) decc8f69b
+feat: improved script action execution experience by using native terminal (#12675) a5e68adb9 
+
+CLI feat commits:
+ feat: display tenant name when user specify tenant id (#12845) 34dee9431
+feat: support tenant parameter for m365 & azure browser login in cli (#12837) bba16f7c4
+feat: remove copilot plugin feature flag and remove standalone api plugin (#12706) e84e1682b
+feat: improved script action execution experience by using native terminal (#12675) a5e68adb9 
+
+Extension-toolkit feat commits:
+ feat: improve walkthrough (#12959) bbe8c1cb0
+feat: copilot plugin debugger (#12876) 8f0fc4543
+feat: update walkthrough (#12863) d8674396d
+feat: update create new project UI (#12847) 64bb5b1c8
+feat: troubleshoot UI (#12851) 54dd9cfbd
+feat: support tenant parameter for m365 & azure browser login in cli (#12837) bba16f7c4
+feat: agent deep link (#12825) 0ca5277d8
+feat: update getting started (#12796) fd8dfe63b
+feat: login with specified tenant id in codespace (#12784) f1a239b0d
+feat: remove copilot plugin feature flag and remove standalone api plugin (#12706) e84e1682b
+feat: show progress bar when switching is not finished (#12753) a47b209a3
+feat: e2e support for multi-tenant (#12642) decc8f69b
+feat: improved script action execution experience by using native terminal (#12675) a5e68adb9 
+
+SDK feat commits:
+  
+
+SDK React feat commits:
+  
+
+.Net SDK feat commits:
+  
+
+
+Fx-core fix commits:
+ fix(da): remove prompt suggestion in ai-plugin, fix registration id mismatch (#12859) 3a7fcbbb7
+fix: improve terminate process error handling (#12811) 61e936ba6
+fix: string change about Office Add-in (#12774) 9c784362c
+fix(kiota): fix spec path when generating auth actions (#12764) 2cd98a73d
+fix(kiota): skip generating spec and plugin manifest (#12756) 6ac82d254
+fix: fix inject auth action (#12735) 8abc127ff
+fix: cli build output json file (#12728) 515287696
+fix: telemetry event and property should not contains number (#12709) 7d4f6063e
+fix: outlook add-in template manifest id should be a placeholder (#12699) 77e05d1e1
+fix: outlook add-in template (#12696) f4a253a9c
+fix: use plural form 846962f94
+fix: capitalization 6d19128ad
+fix: 
+ e95c97320
+fix: rename agent b309223f7 
+
+CLI fix commits:
+ fix: improve process loading ux for termination of process in debug (#12718) 7072452d0
+fix: update running pattern to include 'ready' status (#12719) 1e0763330
+fix: telemetry event and property should not contains number (#12709) 7d4f6063e 
+
+Extension-toolkit fix commits:
+ fix: update agent hint handling in debug provider 86054c6d4
+fix: welcome handler (#12957) 4da5c3b2d
+fix: load tenant id when getting user login status (#12872) af47bc3a8
+fix: wording and welcome page (#12879) 9c7073b8b
+fix: github copilot only shown if non stable release (#12843) cca4aa936
+fix(vsc): sideloading error messages (#12797) c6c5e79ba
+fix: improve terminate process error handling (#12811) 61e936ba6
+fix: kill process silently (#12790) 722920052
+fix: upgrade dev-tunnel-ssh-tcp to 3.12.5 4ec0b0bfa
+fix: devtunnel not forwarding request 3b653edd7
+fix: improve process loading ux for termination of process in debug (#12718) 7072452d0
+fix(vsc): blank sample detail page on codespaces (#12715) a93536289
+fix: kill process tree sync (#12688) 33efd3dbd
+fix: kill process tree after debug terminate f6cb229e5
+fix: end local debug session after sending event df958aa8b 
+
+SDK fix commits:
+  
+
+SDK React fix commits:
+  
+
+.Net SDK fix commits:
+  
+
+
+Fx-core feat commits:
   
 
 CLI feat commits:
