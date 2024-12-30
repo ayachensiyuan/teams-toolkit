@@ -1,3 +1,79 @@
+
+Fx-core feat commits:
+  
+
+CLI feat commits:
+  
+
+Extension-toolkit feat commits:
+  
+
+SDK feat commits:
+  
+
+SDK React feat commits:
+  
+
+.Net SDK feat commits:
+  
+
+
+Fx-core fix commits:
+  
+
+CLI fix commits:
+  
+
+Extension-toolkit fix commits:
+  
+
+SDK fix commits:
+  
+
+SDK React fix commits:
+  
+
+.Net SDK fix commits:
+  
+
+
+Fx-core feat commits:
+  
+
+CLI feat commits:
+  
+
+Extension-toolkit feat commits:
+  
+
+SDK feat commits:
+  
+
+SDK React feat commits:
+  
+
+.Net SDK feat commits:
+  
+
+
+Fx-core fix commits:
+  
+
+CLI fix commits:
+  
+
+Extension-toolkit fix commits:
+  
+
+SDK fix commits:
+  
+
+SDK React fix commits:
+  
+
+.Net SDK fix commits:
+  
+
 # Teams Toolkit Pre-release
 
 ## Changelog
