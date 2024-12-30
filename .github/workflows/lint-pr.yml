@@ -288,6 +288,7 @@ jobs:
         working-directory: ./
         run: |
           git merge-base ${{ github.event.inputs.target-branch }} ${{ github.event.inputs.source-branch }}
+          tempfile=$(mktemp)
           history_cli_feat=$(git log --pretty=format:"%s %h" ${{ github.event.inputs.target-branch }}...${{ github.event.inputs.source-branch }} -- packages/cli | grep "^feat")
           history_toolkit_feat=$(git log --pretty=format:"%s %h" ${{ github.event.inputs.target-branch }}...${{ github.event.inputs.source-branch }} -- packages/vscode-extension | grep "^feat")
           history_core_feat=$(git log --pretty=format:"%s %h" ${{ github.event.inputs.target-branch }}...${{ github.event.inputs.source-branch }} -- packages/fx-core | grep "^feat")
@@ -309,7 +310,6 @@ jobs:
       - name: setup user info
         working-directory: ./packages/vscode-extension
         run: |
-          echo ${{ github.actor }}
           user_info=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/users/$GITHUB_ACTOR)
           git config --global user.email $(echo $user_info | jq -r '.name')
           git config --global user.name $(echo $user_info | jq -r '.name')
