@@ -292,6 +292,8 @@ jobs:
           head=$(git merge-base ${{ github.event.inputs.target-branch }} ${{ github.event.inputs.source-branch }})
           tempfile=$(mktemp)
           echo "1"
+          echo $(git log --pretty=format:"%s %h" $head...HEAD -- packages/cli)
+          echo $(git log --pretty=format:"%s %h" $head...HEAD -- packages/cli | grep "^feat")
           history_cli_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/cli | grep "^feat")
           echo "2"
           history_toolkit_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/vscode-extension | grep "^feat")
