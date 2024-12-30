@@ -287,7 +287,7 @@ jobs:
       - name: update changelog
         working-directory: ./packages/vscode-extension
         run: |
-          HEAD=git merge-base ${{ github.event.inputs.target-branch }} ${{ github.event.inputs.source-branch }}
+          HEAD=git merge base ${{ github.event.inputs.target-branch }} branch ${{ github.event.inputs.source-branch }}
           tempfile=$(mktemp)
           history_cli_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/cli | grep "^feat")
           history_toolkit_feat=$(git log --pretty=format:"%s %h" $head...HEAD -- packages/vscode-extension | grep "^feat")
