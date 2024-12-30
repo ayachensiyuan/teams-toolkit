@@ -288,6 +288,7 @@ jobs:
         id: update-changelog
         working-directory: ./
         run: |
+          grep
           git fetch origin ${{ github.event.inputs.source-branch }}:${{ github.event.inputs.source-branch }}
           head=$(git merge-base ${{ github.event.inputs.target-branch }} ${{ github.event.inputs.source-branch }})
           tempfile=$(mktemp)
