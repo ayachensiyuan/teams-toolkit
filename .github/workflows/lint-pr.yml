@@ -284,6 +284,9 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           ref: ${{ github.event.inputs.target-branch }}
 
+      - name: Fetch all branches and tags
+        run: git fetch --all --tags
+
       - name: update changelog
         id: update-changelog
         working-directory: ./
