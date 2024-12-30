@@ -316,7 +316,7 @@ jobs:
       - name: setup user info
         working-directory: ./packages/vscode-extension
         run: |
-          user_info=$(curl -s  https://api.github.com/users/${{ github.actor }})
+          user_info=$(curl -s -H "Authorization: token ${{ secrets.TEAMSFX_PAT }}" https://api.github.com/users/${{ github.actor }})
           git config --global user.email $(echo $user_info | jq -r '.name')
           git config --global user.name $(echo $user_info | jq -r '.name')
           git add PRERELEASE.md
